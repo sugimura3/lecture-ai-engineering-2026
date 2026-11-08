@@ -16,21 +16,38 @@
 ### 追加したツールと、docstring に書いた説明：
 * 「app/tools.py」に「def make_quiz(lecture: int) -> str:」を追加。
 
-* docstring は以下
-　"""指定した回の用語から1つ選び、理解度確認の問題と答えを作る。
-　その回で扱った用語の意味を確認するクイズを出すときに使う。
+* docstring は以下<br>
+　"""指定した回の用語から1つ選び、理解度確認の問題と答えを作る。<br>
+　その回で扱った用語の意味を確認するクイズを出すときに使う。<br>
 　"""
 
-* 「uv run python -m app.agent --list-tools」を実行すると、
-モデルに見えているツール: 3 個
-[search_glossary]
-[get_lecture_summary]
-[make_quiz]
+* 「uv run python -m app.agent --list-tools」を実行すると、<br>
+モデルに見えているツール: 3 個<br>
+[search_glossary]<br>
+[get_lecture_summary]<br>
+[make_quiz]<br>
 と表示された。
 
 ## 宿題
 
 ### 取り組んだレベル：基礎 / 実装 / 発展
+* 基礎
+
 ### やったこと：
+* app / agent.py のINSTRUCTIONSから「- 用語や講座に固有のことを答える前に、必ず search_glossary で用語集を確認する。」を削除。
+* app / agent.py のINSTRUCTIONSに「- 用語や講座に固有のことを答える前に、必ず search_glossary で用語集の確認はしない。」に変更。
+* app / tool.py の　def make_quiz(lecture: int) -> str:<br>
+    """指定した回の用語から1つ選び、理解度確認の問題と答えを作る。<br>
+を<br>
+    """指定した回の用語をまとめて選び、理解度確認の問題と答えを作る。<br>
+に変更する。
+
 ### 結果：
+* 上記３件の確認を実施したが、変更前と差異はなかった。
+* 「search_glossary」を削除するのは、<br>
+agent.pyの「agent.tool_plain(tools.search_glossary)」を起動しないようにすると、<br>
+「uv run python -m app.agent --list-tools」の動作結果は、「モデルに見えているツール: 2 個」となった。
+
 ### 気づき・疑問：
+* 今回操作した「docstring（ドックストリング）」は、「関数の役割を説明する文章（docstring）」であるが、今回の変更した記入の仕方では効果が見られなかった。
+* 別途、もう少し効果がみられるサンプルを用いて確認をしたい。
