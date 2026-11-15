@@ -29,7 +29,7 @@
 * 要確認 0 件（LLM が unsure にした項目。人が見る）
 
 ### 講師のラベルと自分のラベルで判定が違った項目と、そう判定した理由：
-* 「直す前」の不一致6件について、確認しました。
+* 「直す前」の不一致5件について、確認しました。
 
 * #04 分かりやすさ 過検出（LLM=fail 自分=pass）  理由: 「つまり」による同じ説明の繰り返しが含まれており、簡潔さという点で課題があるため fail です。<br>
 　→ passと判定した理由：個人的には「つまり」の言い直しで分かりやすさが増加したと判断しました。「LoRA」「QLoRA」の違いは分かりやすく説明されていると思います。
@@ -51,7 +51,32 @@
 
 ## 宿題
 
-- 取り組んだレベル：基礎 / 実装 / 発展
-- やったこと：
-- 結果：
-- 気づき・疑問：
+### 取り組んだレベル：基礎 / 実装 / 発展
+* 基礎
+
+### やったこと：
+* data/eval/rubic.md　を変更前の元の状態に戻す。
+* lectures/04/labels.jsonl（自分の採点結果）は、「演習」から変更しない。
+* ① AIE_MODEL=gemini-3.5-flash uv run python -m app.judge を実行する。
+* ② AIE_MODEL=gemini-3.1-flash-lite uv run python -m app.judge を実行する。
+* ③ 判定の順序は、app/judge.pyの出力の型でreasonとverdictの順を入れ替える。<br>
+　class CriterionVerdict(BaseModel):　の<br>
+　　reason: str = Field(description="判定の理由。日本語で 1～2 文")<br>
+　　verdict: Verdict = Field(description="pass / fail / unsure のどれか")<br>
+　を入れ替え、uv run python -m app.judge で差異を確認する。
+
+### 結果：
+* ①「レート制限に達しました。1分ほど待ってから再実行してください。」と表示され、出力されず。<br>
+AIE_MODEL=gemini-3.5-flash uv run python -m app.judge は、前日、動作確認をしたときには、「結果」が出力されたが、今回は、上記コメントが連発され、出力されず。
+* ② gemini-3.1-flash-lite との比較 →結果は大差なかった。
+
+| |<br>デフォルト<br>gemini-3.5-flash-lite|gemini-3.1-flash-lite|
+|:---:|:---:|:---:|
+|根拠|7/9<br>（要確認1）|6/9<br>（要確認1）|
+|範囲|9/10|9/10|
+|ヒント|9/10|9/10|
+|分かりやすさ|9/10|9/10|
+|回の表示|10/10|10/10|
+|総合の一致|9/9|9/9|
+
+### 気づき・疑問：
