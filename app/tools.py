@@ -126,3 +126,21 @@ def search_graph(query: str) -> str:
         return json.dumps({"error": str(e)}, ensure_ascii=False)
     except APIError as e:
         return json.dumps({"error": api_error_message(e.code)}, ensure_ascii=False)
+
+
+def make_quiz(lecture: int) -> str:
+    entries = [
+        entry
+        for entry in load_glossary()
+        if entry["lecture"] == lecture
+    ]
+
+    if not entries:
+        return f"第{lecture}回の用語は用語集にありません。"
+
+    entry = entries[0]
+
+    return (
+        f"「{entry['term']}」の意味は？\n"
+        f"答え: {entry['definition']}"
+    )
