@@ -37,12 +37,42 @@
 <!-- 基礎・実装・発展のどれか1つに取り組めば完了です。 -->
 
 ### 取り組んだレベル：基礎 / 実装 / 発展
-
+- 基礎
 
 ### やったこと：
+
+- 追加前は、「app/mcp_server.py」の「server.tool()(tools.search_glossary)」が実行される。<br>
+　　→「server.tool()(tools.search_glossary)」とは、<br>
+　　　「app/tools.py」の「def search_glossary(query: str) -> str:」を呼び出している<br>
+<br>
+    """講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。<br>
+
+    AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について<br>
+    答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。<br>
+    """<br>
+
+- app/mcp_server.py に、「server.tool()(tools.get_lecture_summary)」 を追加する。<br>
+　　→「app/tools.py」の「def get_lecture_summary(lecture: int) -> str:」を呼び出している。<br>
+<br>
+    """指定した回（1始まりの整数）の講義の要点を返す。<br>
+    「第3回では何を学ぶ？」のように、回の内容や関係を聞かれたときに使う。<br>
+    """<br>
+
+- この両者を比較した。
 
 
 ### 結果：
 
+| |app/mcp_server.pyにおいて、1行を書き足す前|app/mcp_server.pyのTODOの行の下に、1行を書き足したあと|*|app/mcp_server.pyにおいて、1行を書き足す前|app/mcp_server.pyのTODOの行の下に、1行を書き足したあと|
+|:----|:----|:----|:----|:----|:----|
+|command|uv run python -m app.mcp_agent --list-tools|uv run python -m app.mcp_agent --list-tools| |uv run python -m app.mcp_agent --trace "第2回では何を学びま すか？"|uv run python -m app.mcp_agent --trace "第2回では何を学びま すか？"|
+|output|[server] glossary: コマンドで起動（uv run python -m app.mcp_server）<br>モデルに見えているツール: 1 個<br>[glossary_search_glossary]<br>  講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。<br>  AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について<br>  答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。<br>  引数: {"query": {"title": "Query", "type": "string"}}|[server] glossary: コマンドで起動（uv run python -m app.mcp_server）<br>モデルに見えているツール: 2 個　←前回は1回だった<br>[glossary_search_glossary]<br>  講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。<br>  AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について<br>  答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。<br>  引数: {"query": {"title": "Query", "type": "string"}}<br>[glossary_get_lecture_summary]<br>  指定した回（1始まりの整数）の講義の要点を返す。<br>  「第3回では何を学ぶ？」のように、回の内容や関係を聞かれたときに使う。<br>  引数: {"lecture": {"title": "Lecture", "type": "integer"}}| |[server] glossary: コマンドで起動（uv run python -m app.mcp_server）<br>[model] gemini-3.5-flash-lite<br>[tools] MCP サーバー（app/mcp_servers.json）<br>第2回では、主に **「LoRA」** や **「QLoRA」** といった効率的なモデルのファインチューニング手法（PEFT手法）について学びます。<br>具体的には以下の内容を扱います。<br>- 事前学習済みの重みを固定し、小さな低ランク行列（アダプタ）のみを学習する **LoRA** の仕組みと演習<br>- モデルを量子化してメモリを節約しながら学習・推論を行う **QLoRA** についての発展的な比較<br>関係する回：第2回<br>|[server] glossary: コマンドで起動（uv run python -m app.mcp_server）<br>[model] gemini-3.5-flash-lite<br>[tools] MCP サーバー（app/mcp_servers.json）<br>第2回では、**「ファインチューニングとLoRA」**について学びます。<br>具体的な学習内容は以下の通りです：<br>1. **事前学習とファインチューニングの違い**<br>   - 事前学習で汎用的な言語能力を身につけたモデルに対し、目的のデータで追加学習させる仕組みや、向く場面・向かない場面を学びます。<br>2. **SFT（教師あり微調整）**<br>   - 入力と望ましい出力のペアを用いて学習させる方法や、データの質と形式の重要性を学びます。<br>3. **PEFTとLoRA**<br>   - 全パラメータを更新せず、小さな低ランク行列だけを学習させることでメモリと容量を大幅に削減する「LoRA」の仕組みを理解します。また、QLoRA（4bit量子化とLoRAの組み合わせ）との関係についても扱います。<br>4. **過学習への注意**<br>   - 検証データを用いて性能を確かめることの重要性を学びます。<br>演習では、Google Colab上で小さなモデルを架空FAQのデータでLoRA学習させ、出力形式の精度がどう変わるかを実際に体験します。<br>第2回|
+|trace| | | |[tool call]   glossary_search_glossary({'query': '第2回'})<br>[tool return] glossary_search_glossary -> [{"term": "LoRA", "lecture": 2, "definition": "事前学習済みの重みは固定したまま、重みの更新分を2つの小さな行列の積（低ランク行列）で表し、その小さな行列だけを学習するPEFT手法。学習するパラ…|[tool call]   glossary_get_lecture_summary({'lecture': 2})<br>[tool return] glossary_get_lecture_summary -> # 第2回 ファインチューニングとLoRA<br>## この回のねらい<br>- 事前学習とファインチューニングの違い、ファインチューニングが向く場面と向かない場面を理解する<br>- LoRAの考え方を理解し、Google Colab上で小さなモデルを…|
+|usage| | | |[usage] 入力 819 tokens / 出力 140 tokens / モデル応答 2 回|[usage] 入力 1,274 tokens / 出力 275 tokens / モデル応答 2 回|
+|テストする| | | |uv run pytest -q<br>........................                                                                                            [100%]<br>24 passed in 5.31s|uv run pytest -q<br>........................                                                                                            [100%]<br>24 passed in 4.83s|
+
 
 ### 気づき・疑問：
+
+- 作業的には簡単だったが、どの様に動作しているのかを理解知るのには、非常に苦労しました。
+- 本講義の作業段階で、「app/tools.py」の「def make_quiz(lecture: int) -> str:」が保存されていなかった様で、「uv run pytest -q」で、エラーが発生。また、Quri により、エラーが回避出来、課題も達成できました。
